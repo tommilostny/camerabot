@@ -31,6 +31,14 @@ Parametrized commands for raspistill are stored in external bash scripts.
 1. `/pic` sends ordinary photo.
 2. `/zoom` sends zoomed and croped region of interest. Kiln controller in my case.
 
+---
+
+## Use case after fork
+Apartment monitor camera that reports via Telegram Bot.
+![Apartment monitor](img/5782978610443958432_121.jpg)
+
+---
+
 #### Examples
 ![pic processing result](https://cloud.githubusercontent.com/assets/6103939/23331112/898d1204-fb67-11e6-8285-6efc5ba7816b.png)
 ![another pic result](https://cloud.githubusercontent.com/assets/6103939/23331113/92065df0-fb67-11e6-9d0f-d8adc245f9a3.png)
