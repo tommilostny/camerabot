@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"syscall"
 
-	"github.com/cooldarkdryplace/camerabot"
-	_ "github.com/cooldarkdryplace/camerabot/handler"
+	"github.com/tommilostny/camerabot"
+	_ "github.com/tommilostny/camerabot/handler"
 )
 
 const defaultCacheDir = "/tmp"

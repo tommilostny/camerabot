@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cooldarkdryplace/camerabot/telegram"
+	"github.com/tommilostny/camerabot/telegram"
 )
 
 const fallbackTimeout = 20 * time.Second
