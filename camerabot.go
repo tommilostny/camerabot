@@ -1,8 +1,12 @@
 package camerabot
 
 import (
+	"container/list"
 	"fmt"
 	"log"
+	"os"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -17,6 +21,9 @@ var (
 
 	// CacheDir is a path to dorectory where last photos are stored.
 	CacheDir string
+
+	// Chat IDs set in AllowedChatIds are the only ones camerabot will respond to.
+	AllowedChatIDs *list.List
 
 	mu           sync.Mutex
 	lastUpdateID int64
@@ -63,7 +70,7 @@ func handleUpdates(updates []telegram.Update) {
 		cmd := command(u)
 		chatID := u.Message.Chat.ID
 
-		if cmd == "" {
+		if cmd == "" || !isAllowedChatID(chatID) {
 			continue
 		}
 
@@ -90,4 +97,44 @@ func ListenAndServe() {
 		log.Print("Polling...")
 		handleUpdates(updates)
 	}
+}
+
+func ParseAllowedChatIDs() *list.List {
+	splitted := strings.Split(os.Getenv("ALLOWED_CHAT_IDS"), ";")
+	if len(splitted) == 0 {
+		return nil
+	}
+
+	result := list.New()
+	for i := 0; i < len(splitted); i++ {
+
+		chatID, err := strconv.ParseInt(splitted[i], 0, 64)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		result.PushBack(chatID)
+		log.Println("Allowed chat ID:", chatID)
+	}
+
+	if result.Len() == 0 {
+		return nil
+	}
+	return result
+}
+
+func isAllowedChatID(chatID int64) bool {
+	if AllowedChatIDs == nil {
+		return true
+	}
+
+	for e := AllowedChatIDs.Front(); e != nil; e = e.Next() {
+		if e.Value.(int64) == chatID {
+			return true
+		}
+	}
+
+	log.Println("Chat ID:", chatID, "is not allowed")
+	return false
 }

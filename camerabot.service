@@ -14,3 +14,4 @@ TimeoutStopSec=5
 Environment="TOKEN=secret"
 Environment="MAIN_CHAT_ID=42"
 Environment="CACHE_DIR=/tmp"
+Environment="ALLOWED_CHAT_IDS=id1;id2"

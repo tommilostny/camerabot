@@ -30,6 +30,13 @@ func main() {
 		camerabot.CacheDir = defaultCacheDir
 	}
 
+	if v := camerabot.ParseAllowedChatIDs(); v != nil {
+		camerabot.AllowedChatIDs = v
+	} else {
+		log.Printf("No allowed chat IDs set. Allowing everyone.")
+		camerabot.AllowedChatIDs = nil
+	}
+
 	go camerabot.ListenAndServe()
 
 	signalChan := make(chan os.Signal, 1)
