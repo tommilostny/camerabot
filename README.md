@@ -24,8 +24,9 @@ Parametrized commands for raspistill are stored in external bash scripts.
 ### Running bot
 1. Setup Raspberry Pi and Pi camera.
 2. Set environment variable `TOKEN` with your bot token (Botfather can provide you with the one).
-3. Use systemd config to start as a service or simply run the app from the console.
-4. Start direct conversation with bot or add bot to group chat if you are interested in broadcasting your kiln paranoia.
+3. Set environment variable `ALLOWED_CHAT_IDS` with chat IDs you want to have access to the camera (separated by ;).
+4. Use systemd config to start as a service or simply run the app from the console.
+5. Start direct conversation with bot or add bot to group chat if you are interested in broadcasting your kiln paranoia.
 
 ### Commands
 1. `/pic` sends ordinary photo.
