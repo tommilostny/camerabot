@@ -35,7 +35,10 @@ Parametrized commands for raspistill are stored in external bash scripts.
 ---
 
 ## Use case after fork
-Apartment monitor camera that reports via Telegram Bot to a few roommates (AllowedChatIDs).
+Apartment monitor camera that reports via Telegram Bot to a few roommates (``AllowedChatIDs``).
+
+This use case was enhanced by adding [gocron](https://github.com/go-co-op/gocron) scheduler, that sends a photo from the camera to all allowed Chat IDs every **30 minutes** using the ``/pic`` command handler.
+
 ![Apartment monitor](img/5782978610443958432_121.jpg)
 
 ---
