@@ -41,7 +41,7 @@ func main() {
 
 	s := gocron.NewScheduler(time.UTC)
 
-	s.Every(1).Hour().Do(func() {
+	s.Every(30).Minutes().Do(func() {
 		handler := camerabot.Handlers["/pic"]
 		for e := camerabot.AllowedChatIDs.Front(); e != nil; e = e.Next() {
 
