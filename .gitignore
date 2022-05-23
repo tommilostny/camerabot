@@ -31,3 +31,4 @@ token
 config.json
 
 *.swp
+cmd/camerabot/camerabot
