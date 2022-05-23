@@ -40,9 +40,9 @@ func main() {
 	}
 
 	s := gocron.NewScheduler(time.UTC)
-	handler := camerabot.Handlers["/pic"]
 
 	s.Every(1).Hour().Do(func() {
+		handler := camerabot.Handlers["/pic"]
 		for e := camerabot.AllowedChatIDs.Front(); e != nil; e = e.Next() {
 
 			log.Println("Sending picture to chat:", e.Value)
