@@ -6,7 +6,9 @@ import (
 	"os/signal"
 	"strconv"
 	"syscall"
+	"time"
 
+	"github.com/go-co-op/gocron"
 	"github.com/tommilostny/camerabot"
 	_ "github.com/tommilostny/camerabot/handler"
 )
@@ -37,11 +39,29 @@ func main() {
 		camerabot.AllowedChatIDs = nil
 	}
 
+	s := gocron.NewScheduler(time.UTC)
+	handler := camerabot.Handlers["/pic"]
+
+	s.Every(5).Seconds().Do(func() {
+		for e := camerabot.AllowedChatIDs.Front(); e != nil; e = e.Next() {
+
+			log.Println("Sending picture to chat:", e.Value)
+
+			if err := handler.Handle(e.Value.(int64)); err != nil {
+				log.Printf("Failed to handle chat ID %d: %s", e.Value.(int64), err)
+			}
+		}
+	})
+
 	go camerabot.ListenAndServe()
+
+	s.StartAsync()
 
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 
 	<-signalChan
 	log.Println("Interrupt received. Graceful shutdown.")
+
+	s.Stop()
 }
