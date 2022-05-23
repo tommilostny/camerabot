@@ -35,7 +35,7 @@ Parametrized commands for raspistill are stored in external bash scripts.
 ---
 
 ## Use case after fork
-Apartment monitor camera that reports via Telegram Bot.
+Apartment monitor camera that reports via Telegram Bot to a few roommates (AllowedChatIDs).
 ![Apartment monitor](img/5782978610443958432_121.jpg)
 
 ---
