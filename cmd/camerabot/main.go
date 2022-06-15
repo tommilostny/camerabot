@@ -58,20 +58,7 @@ func main() {
 
 	s := gocron.NewScheduler(time.UTC)
 
-	s.Every(1).Minute().Do(func() {
-		if !shouldSendAPhoto(int64(time.Now().Minute())) {
-			return
-		}
-		handler := camerabot.Handlers["/pic"]
-		for e := camerabot.AllowedChatIDs.Front(); e != nil; e = e.Next() {
-
-			log.Println("Sending picture to chat:", e.Value)
-
-			if err := handler.Handle(e.Value.(int64)); err != nil {
-				log.Printf("Failed to handle chat ID %d: %s", e.Value.(int64), err)
-			}
-		}
-	})
+	s.Every(1).Minute().Do(sendPhotoToAllAllowedChatIDs)
 
 	go camerabot.ListenAndServe()
 
@@ -117,4 +104,21 @@ func shouldSendAPhoto(minute int64) bool {
 		}
 	}
 	return false
+}
+
+func sendPhotoToAllAllowedChatIDs() {
+	if !shouldSendAPhoto(int64(time.Now().Minute() - 1)) {
+		return
+	}
+	time.Sleep(time.Second * (60 - time.Now().Second()))
+
+	handler := camerabot.Handlers["/pic"]
+	for e := camerabot.AllowedChatIDs.Front(); e != nil; e = e.Next() {
+
+		log.Println("Sending picture to chat:", e.Value)
+
+		if err := handler.Handle(e.Value.(int64)); err != nil {
+			log.Printf("Failed to handle chat ID %d: %s", e.Value.(int64), err)
+		}
+	}
 }
