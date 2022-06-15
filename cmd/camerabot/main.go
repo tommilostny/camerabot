@@ -107,7 +107,7 @@ func shouldSendAPhoto(minute int64) bool {
 }
 
 func sendPhotoToAllAllowedChatIDs() {
-	if !shouldSendAPhoto(int64(time.Now().Minute() - 1)) {
+	if !shouldSendAPhoto(int64((59 + time.Now().Minute()) % 60)) {
 		return
 	}
 	time.Sleep(time.Second * time.Duration(60-time.Now().Second()))
