@@ -110,7 +110,7 @@ func sendPhotoToAllAllowedChatIDs() {
 	if !shouldSendAPhoto(int64(time.Now().Minute() - 1)) {
 		return
 	}
-	time.Sleep(time.Second * (60 - time.Now().Second()))
+	time.Sleep(time.Second * time.Duration(60-time.Now().Second()))
 
 	handler := camerabot.Handlers["/pic"]
 	for e := camerabot.AllowedChatIDs.Front(); e != nil; e = e.Next() {
