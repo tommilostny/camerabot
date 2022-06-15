@@ -1,10 +1,12 @@
 package main
 
 import (
+	"container/list"
 	"log"
 	"os"
 	"os/signal"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
@@ -32,16 +34,34 @@ func main() {
 		camerabot.CacheDir = defaultCacheDir
 	}
 
-	if v := camerabot.ParseAllowedChatIDs(); v != nil {
+	if v := parseIntListFromEnvironment("ALLOWED_CHAT_IDS"); v != nil {
 		camerabot.AllowedChatIDs = v
+		log.Printf("Allowed chat IDs:")
+		for e := camerabot.AllowedChatIDs.Front(); e != nil; e = e.Next() {
+			log.Printf("  %d", e.Value.(int64))
+		}
 	} else {
 		log.Printf("No allowed chat IDs set. Allowing everyone.")
 		camerabot.AllowedChatIDs = nil
 	}
 
+	if v := parseIntListFromEnvironment("MINUTES"); v != nil {
+		camerabot.Minutes = v
+		log.Printf("Minutes set:")
+		for e := camerabot.Minutes.Front(); e != nil; e = e.Next() {
+			log.Printf("  %d", e.Value.(int64))
+		}
+	} else {
+		log.Printf("No minutes to auto-send set. Auto-send disabled.")
+		camerabot.Minutes = nil
+	}
+
 	s := gocron.NewScheduler(time.UTC)
 
-	s.Every(30).Minutes().Do(func() {
+	s.Every(1).Minute().Do(func() {
+		if !shouldSendAPhoto(int64(time.Now().Minute())) {
+			return
+		}
 		handler := camerabot.Handlers["/pic"]
 		for e := camerabot.AllowedChatIDs.Front(); e != nil; e = e.Next() {
 
@@ -64,4 +84,37 @@ func main() {
 	log.Println("Interrupt received. Graceful shutdown.")
 
 	s.Stop()
+}
+
+func parseIntListFromEnvironment(envVarName string) *list.List {
+	splitted := strings.Split(os.Getenv(envVarName), ";")
+	if len(splitted) == 0 {
+		return nil
+	}
+
+	result := list.New()
+	for i := 0; i < len(splitted); i++ {
+		value, err := strconv.ParseInt(splitted[i], 0, 64)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		result.PushBack(value)
+	}
+
+	if result.Len() == 0 {
+		return nil
+	}
+	return result
+}
+
+func shouldSendAPhoto(minute int64) bool {
+	if camerabot.Minutes != nil {
+		for e := camerabot.Minutes.Front(); e != nil; e = e.Next() {
+			if e.Value.(int64) == minute {
+				return true
+			}
+		}
+	}
+	return false
 }

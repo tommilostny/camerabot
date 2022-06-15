@@ -4,9 +4,6 @@ import (
 	"container/list"
 	"fmt"
 	"log"
-	"os"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -24,6 +21,9 @@ var (
 
 	// Chat IDs set in AllowedChatIds are the only ones camerabot will respond to.
 	AllowedChatIDs *list.List
+
+	// Minutes at which camerabot should send a photo.
+	Minutes *list.List
 
 	mu           sync.Mutex
 	lastUpdateID int64
@@ -99,42 +99,15 @@ func ListenAndServe() {
 	}
 }
 
-func ParseAllowedChatIDs() *list.List {
-	splitted := strings.Split(os.Getenv("ALLOWED_CHAT_IDS"), ";")
-	if len(splitted) == 0 {
-		return nil
-	}
-
-	result := list.New()
-	for i := 0; i < len(splitted); i++ {
-
-		chatID, err := strconv.ParseInt(splitted[i], 0, 64)
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-
-		result.PushBack(chatID)
-		log.Println("Allowed chat ID:", chatID)
-	}
-
-	if result.Len() == 0 {
-		return nil
-	}
-	return result
-}
-
 func isAllowedChatID(chatID int64) bool {
 	if AllowedChatIDs == nil {
 		return true
 	}
-
 	for e := AllowedChatIDs.Front(); e != nil; e = e.Next() {
 		if e.Value.(int64) == chatID {
 			return true
 		}
 	}
-
 	log.Println("Chat ID:", chatID, "is not allowed")
 	return false
 }
